@@ -3,7 +3,7 @@
 # jan 1 2020
 
 # imports
-import pygame,random,os,time,neat,sys
+import pygame, random, os, time, sys, pickle
 from random import randint
 
 # pygame settings
@@ -72,8 +72,9 @@ while running:
     if started == False:
         if score > highScore:
             highScore = score
+            pickle.dump(highScore, open("highscore.dat", "wb"))
     else:
-        highScore = 0
+        highScore = pickle.load(open("highscore.dat", "rb"))
 
     score = 0
 
