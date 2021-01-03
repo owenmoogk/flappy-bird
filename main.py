@@ -177,4 +177,7 @@ while running:
                     # if space is pressed
                     if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                         pause = False
-                        started = False # no more nice guy
+                        started = False
+                    if event.key == pygame.K_DOWN:
+                        easterEgg = font.render("uwu <3",1,(255,255,255))
+                        screen.blit(easterEgg,(10, windowHeight - 50))
