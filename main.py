@@ -111,6 +111,11 @@ while running:
 
             # move pipes
             i.x -= pipeSpeed
+
+            # collision detection
+            if i.x < b1.x + birdWidth and i.x + pipeWidth > b1.x: # checking if the pipe x overlaps with the bird x
+                if i.yBottom < b1.y + birdHeight or i.yBottom - pipeGap > b1.y:
+                    playing = False
             
             # blit images
             screen.blit(pipeImg,(i.x,i.yBottom))
