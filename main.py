@@ -57,6 +57,7 @@ class pipe:
 
 
 running = True
+started = True
 
 # main running loop
 while running:
@@ -66,8 +67,14 @@ while running:
     pipes.append(pipe(randint(pipeGap + 50,windowHeight-200),windowWidth))
 
     playing = True
-    lost = False
     pause = True # this is telling to pause until space is pressed to start the game again. is true when started and after every death
+
+    if started == False:
+        if score > highScore:
+            highScore = score
+    else:
+        highScore = 0
+
     score = 0
 
     # when the player is in the game (ie not lost or on the starting screen)
@@ -82,7 +89,7 @@ while running:
             # if key is pressed
             if event.type == pygame.KEYDOWN:
                 # if space is pressed
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                     b1.ySpeed = 0-jumpPower
 
         # background
@@ -93,13 +100,11 @@ while running:
         # moving the bird y
         b1.y += b1.ySpeed
 
-        #y collision detection
+        # y collision detection
         if b1.y < 0:
             playing = False
-            lost = True
         if b1.y > 800 - birdHeight:
             playing = False
-            lost = True
 
         # if the forwardmost pipe is off screen then delete
         if pipes[len(pipes)-1].x < windowWidth - 200:
@@ -125,6 +130,7 @@ while running:
             if i.x < 0 - pipeWidth:
                 pipes.remove(pipes[0])
             
+            # adds to score once pipe is passed, only if it has not yet been scored
             if not i.pointScored and i.x + pipeWidth < birdX:
                 i.pointScored = True
                 score += 1
@@ -132,6 +138,8 @@ while running:
         # score onto screen
         score_label = font.render("Score: " + str(score),1,(255,255,255))
         screen.blit(score_label, (10, 10))
+        highScoreLabel = font.render("High Score: "+str(highScore),1,(255,255,255))
+        screen.blit(highScoreLabel, (10, 50))
 
         # bird onto screen
         screen.blit(birdImg,(b1.x,b1.y))
@@ -144,6 +152,19 @@ while running:
 
         # the game is paused at the start screen
         while pause:
+
+            # instruction label
+            if started == False:
+                lostLabel = font.render("Space to try again",1,(255,255,255))
+                screen.blit(lostLabel, (10, 90))
+            else:
+                lostLabel = font.render("Space to start",1,(255,255,255))
+                screen.blit(lostLabel, (10, 100))
+
+            # display stufz
+            clock.tick(gameSpeed)
+            pygame.display.update()
+
             events = pygame.event.get()
             for event in events:
             # if x button pressed stop
@@ -154,5 +175,6 @@ while running:
                 # if key is pressed
                 if event.type == pygame.KEYDOWN:
                     # if space is pressed
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                         pause = False
+                        started = False # no more nice guy
