@@ -154,36 +154,4 @@ while running:
         screen.blit(birdImg,(b1.x,b1.y))
         renderScore(score)
         clock.tick(gameSpeed)
-
-        # the game is paused at the start screen
-        while pause:
-
-            # instruction label
-            if started == False:
-                lostLabel = font.render("Space to try again",1,(255,255,255))
-                screen.blit(lostLabel, (10, 90))
-            else:
-                lostLabel = font.render("Space to start",1,(255,255,255))
-                screen.blit(lostLabel, (10, 100))
-
-            # display stufz
-            clock.tick(gameSpeed)
-            pygame.display.update()
-
-            events = pygame.event.get()
-            for event in events:
-            # if x button pressed stop
-                if event.type == pygame.QUIT:
-                    running = False
-                    pause = False
-                    playing = False
-                # if key is pressed
-                if event.type == pygame.KEYDOWN:
-                    # if space is pressed
-                    if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
-                        pause = False
-                        started = False
-                    if event.key == pygame.K_DOWN:
-                        easterEgg = font.render("uwu <3",1,(255,255,255))
-                        screen.blit(easterEgg,(10, windowHeight - 50))
         pygame.display.update()
