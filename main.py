@@ -46,6 +46,20 @@ class bird:
         self.x = x
         self.y = y
         self.ySpeed = 0
+    def jump(self):
+        self.ySpeed = 0-jumpPower
+        self.tick_count = 0
+        self.height = self.y
+    def gravity(self):
+        self.ySpeed += gravity
+        self.y += self.ySpeed
+    def topBottomCollision(self):
+        playing = True
+        if self.y < 0:
+            playing = False
+        if self.y > windowHeight - birdHeight:
+            playing = False
+        return(playing)
 
 # pipe class
 class pipe:
@@ -71,9 +85,8 @@ while running:
     pipes = []
     pipes.append(pipe(randint(pipeGap + 50,windowHeight-200),windowWidth))
 
+    # highscore
     playing = True
-    pause = True # this is telling to pause until space is pressed to start the game again. is true when started and after every death
-
     if started == False:
         if score > highScore:
             highScore = score
@@ -96,15 +109,12 @@ while running:
             if event.type == pygame.KEYDOWN:
                 # if space is pressed
                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
-                    b1.ySpeed = 0-jumpPower
+                    b1.jump()
 
         # background
         screen.blit(backgroundImg,(0,0))
 
-        # adjusting the y speed of the bird
-        b1.ySpeed += gravity
-        # moving the bird y
-        b1.y += b1.ySpeed
+        b1.gravity()
 
         # y collision detection
         if b1.y < 0:
@@ -140,16 +150,10 @@ while running:
                 i.pointScored = True
                 score += 1
 
-        # bird onto screen
+        # display
         screen.blit(birdImg,(b1.x,b1.y))
-
         renderScore(score)
-
-        # make sure timing is right
         clock.tick(gameSpeed)
-
-        # final update to the screen
-        pygame.display.update()
 
         # the game is paused at the start screen
         while pause:
@@ -182,3 +186,4 @@ while running:
                     if event.key == pygame.K_DOWN:
                         easterEgg = font.render("uwu <3",1,(255,255,255))
                         screen.blit(easterEgg,(10, windowHeight - 50))
+        pygame.display.update()
