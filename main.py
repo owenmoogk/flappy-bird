@@ -55,6 +55,11 @@ class pipe:
         self.x = x
         self.pointScored = False
 
+def renderScore(score):
+    score_label = font.render("Score: " + str(score),1,(255,255,255))
+    screen.blit(score_label, (10, 10))
+    highScoreLabel = font.render("High Score: "+str(highScore),1,(255,255,255))
+    screen.blit(highScoreLabel, (10, 50))
 
 running = True
 started = True
@@ -119,9 +124,8 @@ while running:
             i.x -= pipeSpeed
 
             # collision detection
-            if i.x < b1.x + birdWidth and i.x + pipeWidth > b1.x: # checking if the pipe x overlaps with the bird x
-                if i.yBottom < b1.y + birdHeight or i.yBottom - pipeGap > b1.y:
-                    playing = False
+            if i.x < b1.x + birdWidth and i.x + pipeWidth > b1.x and (i.yBottom < b1.y + birdHeight or i.yBottom - pipeGap > b1.y): # checking if the pipe x overlaps with the bird x
+                playing = False
             
             # blit images
             screen.blit(pipeImg,(i.x,i.yBottom))
@@ -136,14 +140,10 @@ while running:
                 i.pointScored = True
                 score += 1
 
-        # score onto screen
-        score_label = font.render("Score: " + str(score),1,(255,255,255))
-        screen.blit(score_label, (10, 10))
-        highScoreLabel = font.render("High Score: "+str(highScore),1,(255,255,255))
-        screen.blit(highScoreLabel, (10, 50))
-
         # bird onto screen
         screen.blit(birdImg,(b1.x,b1.y))
+
+        renderScore(score)
 
         # make sure timing is right
         clock.tick(gameSpeed)
