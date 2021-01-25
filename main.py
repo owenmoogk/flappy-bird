@@ -30,7 +30,6 @@ pipeImg = pygame.transform.scale(pygame.image.load(os.path.join("assets","pipe.p
 pipeImgFlipped = pygame.transform.flip(pipeImg, False, True)
 backgroundImg = pygame.transform.scale(pygame.image.load(os.path.join("assets","background.png")), (windowWidth, windowHeight))
 birdImg = pygame.transform.scale(pygame.image.load(os.path.join("assets","bird.png")), (birdWidth, birdHeight))
-baseImg = pygame.image.load(os.path.join("assets","base.png"))
 
 # fonts
 pygame.font.init()
@@ -78,7 +77,6 @@ def renderScore(score):
 running = True
 started = True
 
-# main running loop
 while running:
     b1 = bird(birdX,windowHeight/2-100)
 
@@ -96,7 +94,6 @@ while running:
 
     score = 0
 
-    # when the player is in the game (ie not lost or on the starting screen)
     while playing:
         # looping thru events
         events = pygame.event.get()
@@ -111,7 +108,6 @@ while running:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                     b1.jump()
 
-        # background
         screen.blit(backgroundImg,(0,0))
 
         b1.gravity()
@@ -127,30 +123,18 @@ while running:
             pipes.append(pipe(randint(pipeGap + 50,windowHeight-200),windowWidth))
 
 
-        # loop thru pipes
         for i in pipes:
-
-            # move pipes
             i.x -= pipeSpeed
-
-            # collision detection
-            if i.x < b1.x + birdWidth and i.x + pipeWidth > b1.x and (i.yBottom < b1.y + birdHeight or i.yBottom - pipeGap > b1.y): # checking if the pipe x overlaps with the bird x
+            if i.x < b1.x + birdWidth and i.x + pipeWidth > b1.x and (i.yBottom < b1.y + birdHeight or i.yBottom - pipeGap > b1.y):
                 playing = False
-            
-            # blit images
             screen.blit(pipeImg,(i.x,i.yBottom))
             screen.blit(pipeImgFlipped, (i.x,i.yTop))
-
-            # when off screen delete
             if i.x < 0 - pipeWidth:
                 pipes.remove(pipes[0])
-            
-            # adds to score once pipe is passed, only if it has not yet been scored
             if not i.pointScored and i.x + pipeWidth < birdX:
                 i.pointScored = True
                 score += 1
 
-        # display
         screen.blit(birdImg,(b1.x,b1.y))
         renderScore(score)
         clock.tick(gameSpeed)
