@@ -1,5 +1,5 @@
 # owen moogk
-# ai flappy bird
+# flappy bird
 # jan 1 2020
 
 # imports
@@ -13,7 +13,7 @@ birdHeight = 30
 birdWidth = 40
 
 # game settings
-gameSpeed = 30
+gameSpeed = 40
 gravity = 0.8
 jumpPower = 12
 pipeHeight = 650
@@ -49,16 +49,16 @@ class bird:
         self.ySpeed = 0-jumpPower
         self.tick_count = 0
         self.height = self.y
-    def gravity(self):
+    def move(self):
         self.ySpeed += gravity
         self.y += self.ySpeed
     def topBottomCollision(self):
-        playing = True
+        collided = False
         if self.y < 0:
-            playing = False
+            collided = True
         if self.y > windowHeight - birdHeight:
-            playing = False
-        return(playing)
+            collided = True
+        return(collided)
 
 # pipe class
 class pipe:
@@ -68,7 +68,12 @@ class pipe:
         self.x = x
         self.pointScored = False
 
-def renderScore(score):
+def renderScreen(score, bird, pipes):
+    screen.blit(backgroundImg,(0,0))
+    for pipe in pipes:
+        screen.blit(pipeImg,(pipe.x,pipe.yBottom))
+        screen.blit(pipeImgFlipped, (pipe.x,pipe.yTop))
+    screen.blit(birdImg,(bird.x,bird.y))
     score_label = font.render("Score: " + str(score),1,(255,255,255))
     screen.blit(score_label, (10, 10))
     highScoreLabel = font.render("High Score: "+str(highScore),1,(255,255,255))
@@ -108,34 +113,23 @@ while running:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                     b1.jump()
 
-        screen.blit(backgroundImg,(0,0))
-
-        b1.gravity()
-
-        # y collision detection
-        if b1.y < 0:
-            playing = False
-        if b1.y > 800 - birdHeight:
-            playing = False
+        b1.move()
+        playing = not b1.topBottomCollision() # if collision is true, playing is false
 
         # if the forwardmost pipe is off screen then delete
-        if pipes[len(pipes)-1].x < windowWidth - 200:
+        if pipes[len(pipes)-1].x < windowWidth - 250:
             pipes.append(pipe(randint(pipeGap + 50,windowHeight-200),windowWidth))
-
 
         for i in pipes:
             i.x -= pipeSpeed
             if i.x < b1.x + birdWidth and i.x + pipeWidth > b1.x and (i.yBottom < b1.y + birdHeight or i.yBottom - pipeGap > b1.y):
                 playing = False
-            screen.blit(pipeImg,(i.x,i.yBottom))
-            screen.blit(pipeImgFlipped, (i.x,i.yTop))
             if i.x < 0 - pipeWidth:
                 pipes.remove(pipes[0])
             if not i.pointScored and i.x + pipeWidth < birdX:
                 i.pointScored = True
                 score += 1
 
-        screen.blit(birdImg,(b1.x,b1.y))
-        renderScore(score)
+        renderScreen(score, b1, pipes)
         clock.tick(gameSpeed)
         pygame.display.update()
